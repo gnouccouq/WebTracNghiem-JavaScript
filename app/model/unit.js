@@ -7,7 +7,7 @@ const Unit = new Schema({
     name: String,
     background: String,
     description: String,
-    // subscriber: Number,
+    number: String,
     slug: { type: String, slug: 'name', unique: true },
 }, { timestamps: true })
 module.exports = mongoose.model('Unit', Unit)

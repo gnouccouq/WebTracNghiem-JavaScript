@@ -9,6 +9,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
 app.use(express.static('public'))
+app.use("/public", express.static(__dirname + "/public"));
 app.set('view engine', 'ejs')
 routes(app)
 const ExamControl = require('./util/examControl')

@@ -1,14 +1,17 @@
-const Exam = require('..//app/model/exam')
-const Unit = require('..//app/model/unit')
-const Vocabulary = require('..//app/model/vocabulary')
-const Contact = require('..//app/model/vocabulary')
+const express = require("express");
+const router = express.Router();
+var Contact = require("..//app/model/contact");
+var Exam = require('..//app/model/exam')
+var Unit = require('..//app/model/unit')
+var Vocabulary = require('..//app/model/vocabulary');
+const { render } = require("express/lib/response");
+const { default: mongoose } = require("mongoose");
 
-new Unit({
-    name: "Unit 4 - Basic Communication",
-    background: "EnglishIT2.jpg",
-    description: "This is unit 1 and content is life",
-    number: "20"
-}).save()
+
+//const Exam = require('..//app/model/exam')
+//const Unit = require('..//app/model/unit')
+//const Vocabulary = require('..//app/model/vocabulary')
+//const Contact = require('..//app/model/contact')
 
 
 
@@ -26,16 +29,45 @@ function Routes(app) {
         })
     })
 
+    app.get('/admin.ejs', function(req, res) {
+        Unit.find().then((units) => {
+            res.render('admin.ejs')
+        })
+    })
+
+    app.get('/addunits.ejs', function(req, res) {
+        Unit.find().then((units) => {
+            res.render('addunits.ejs', { units: units })
+        })
+    })
+
+    app.get('/formadd.ejs', function(req, res) {
+            res.render('formadd.ejs')
+    })
+
+    app.post('/add', function(req, res, next) {
+        Unit.create(req.body);
+        res.redirect('addunits.ejs')
+    })
+
+    app.get('/aduser.ejs', function(req, res, next) {
+        Exam.find({}, (error, data) => {
+            console.log('Danh sach', data);
+            res.render('aduser.ejs', { exams: data});
+        });
+    })
+
     app.get('/about.ejs', function(req, res) {
         Unit.find().then((units) => {
             res.render('about.ejs')
         })
     })
 
-    app.get('/achievements.ejs', function(req, res) {
-        Unit.find().then((units) => {
-            res.render('achievements.ejs')
-        })
+    app.get('/achievements.ejs', function(req, res, next) {
+        Exam.find({}, (error, data) => {
+            console.log('Danh sach', data);
+            res.render('achievements.ejs', { exams: data});
+        });
     })
 
     app.get('/why.ejs', function(req, res) {
@@ -45,9 +77,17 @@ function Routes(app) {
     })
 
     app.get('/contact.ejs', function(req, res) {
-        Unit.find().then((units) => {
-            res.render('contact.ejs')
-        })
+        Contact.find({}, (error, data) => {
+            console.log('Danh sach lien he', data);
+            res.render('contact.ejs', { contacts: data});
+        });
+    })
+
+    app.get('/adfeedback.ejs', function(req, res) {
+        Contact.find({}, (error, data) => {
+            console.log('Danh sach lien he', data);
+            res.render('adfeedback.ejs', { contacts: data});
+        });
     })
 
     app.get('/exam/:slug', function(req, res) {
@@ -61,27 +101,9 @@ function Routes(app) {
         })
     })
 
-    app.post("/sendContact", async (req, res) => {
-        const { Name, email, phoneNumber, mess } = req.body;
-        const _contact = new Contact({
-          Name,
-          email,
-          phoneNumber,
-          mess,
-        });
-
-        _contact.save((err, data) => {
-            if (err) {
-              console.log(err);
-              return res.status(400).json({
-                mess: "Sth wrong",
-              });
-            }
-            if (data) {
-              // res.render("home");
-              res.redirect("/home.ejs");
-            }
-          });
+    app.post('/sentContact', function(req, res, next) {
+        Contact.create(req.body);
+        res.redirect('/contact.ejs')
     })
 }
 module.exports = Routes;

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+
+  <title>Admin</title>
+
+
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <!-- progress barstle -->
+  <link rel="stylesheet" href="css/css-circular-prog-bar.css">
+  <!-- fonts style -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Raleway:400,600&display=swap" rel="stylesheet">
+  <!-- font wesome stylesheet -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  <!-- Custom styles for this template -->
+  <link href="css/style.css" rel="stylesheet" />
+  <!-- responsive style -->
+  <link href="css/responsive.css" rel="stylesheet" />
+
+
+
+
+  <link rel="stylesheet" href="css/css-circular-prog-bar.css">
+
+
+</head>
+
+<body class="sub_page">
+  <div class="top_container ">
+    <!-- header section strats -->
+    <%- include('partical/menuadmin'); %>
+  </div>
+  <!-- end header section -->
+
+  <div class="common_style">
+
+    <table border="1" style="text-align: center;">
+        <tr>
+            <th>User ID</th>
+            <th>User Name</th>
+            <th>Percent Complete</th>
+            <th>Unit ID</th>
+            <th>Time</th>
+        </tr>
+        <% exams.forEach(item => { %>
+            <tr>
+                <td><%= item._id%></td>
+                <td><%= item.userName%></td>
+                <td><%= item.percentComplete%></td>
+                <td><%= item.unitId%></td>
+                <td><%= item.updatedAt%></td>   
+            </tr>
+            
+            <%})%>
+    </table>
+
+    <!-- why section -->
+    <!-- <div class="container mt-4 p-4">
+        <div class="row row-cols-1 row-cols-md-2">
+            <% exams.forEach(item => { %>
+                <div class="col-lg-4 col-sm-6 mb-4">
+                  <form class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <p style="color: red;">ID User:</p><%= item._id%>
+                            </h5>
+                            <h5 class="card-title">
+                                <p style="color: red;">Name:</p><%= item.userName%>
+                            </h5>
+                            <p class="card-text">
+                                <p style="color: red;">Unit ID:</p><%= item.unitId%>
+                            </p>
+                            <p class="card-text">
+                                <p style="color: red;">Score:</p><%= item.percentComplete%><a>%</a>
+                            </p>
+                            <p class="card-text">
+                                <p style="color: red;">Time:</p><%= item.updatedAt%>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+                <%})%>
+        </div>
+    </div> -->
+
+
+    <!-- end why section -->
+
+  </div>
+
+
+  <!-- info section -->
+
+
+</body>
+
+</html>

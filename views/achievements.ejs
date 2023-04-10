@@ -47,7 +47,7 @@
 
 
 
-  <!-- contact section -->
+  <!-- score section -->
 
   <section class="contact_section ">
 
@@ -60,11 +60,26 @@
               USER SCOREBOARD
             </h2>
           </div>
-          
 
+          <div class="container mt-4 p-4">
+            <div class="row row-cols-1 row-cols-md-2">
+                <% exams.forEach(item => { %>
+                    <div class="col-lg-4 col-sm-6 mb-4">
+                      <form class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <p style="color: red;">Name:</p><%= item.userName%>
+                                </h5>
+                                <p class="card-text">
+                                    <p style="color: red;">Score:</p><%= item.percentComplete%><a>%</a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                    <%})%>
             </div>
+        </div>
 
-          </form>
         </div>
         <div class="col-md-6">
           <div class="contact_img-box">

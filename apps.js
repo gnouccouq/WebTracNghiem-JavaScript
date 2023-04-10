@@ -1,9 +1,21 @@
 const express = require('express')
 const app = express()
+const bodyParser = require("body-parser");
 
 const port = 3001
+const mongoose = require("mongoose");
 const routes = require('./routes')
 const db = require('./config/database')
+
+mongoose.set("strictQuery", false);
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+
 db.connect()
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);

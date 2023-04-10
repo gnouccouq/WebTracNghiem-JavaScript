@@ -45,6 +45,25 @@ function Routes(app) {
             res.render('formadd.ejs')
     })
 
+    app.get('/formupdate/:id', function(req, res) {
+        Unit.findById(req.params.id, (error, data) => {
+            res.render('formupdate.ejs', { units: data });
+        });
+    })
+
+    app.post('/update', function(req, res, next) {
+        console.log(req.body);
+        Unit.findByIdAndUpdate(req.body.id, req.body, (error, data) => {
+            res.redirect('addunits.ejs')
+        });
+    })
+
+    app.get('/formdelete/:id', function(req, res) {
+        Unit.findByIdAndDelete(req.params.id, (error, data) => {
+            res.redirect('/addunits.ejs');
+        });
+    })
+
     app.post('/add', function(req, res, next) {
         Unit.create(req.body);
         res.redirect('addunits.ejs')
@@ -52,7 +71,7 @@ function Routes(app) {
 
     app.get('/aduser.ejs', function(req, res, next) {
         Exam.find({}, (error, data) => {
-            console.log('Danh sach', data);
+            
             res.render('aduser.ejs', { exams: data});
         });
     })
@@ -74,6 +93,12 @@ function Routes(app) {
         Unit.find().then((units) => {
             res.render('why.ejs')
         })
+    })
+
+    app.get('/login.ejs', function(req, res) {
+       
+            res.render('login.ejs')
+        
     })
 
     app.get('/contact.ejs', function(req, res) {

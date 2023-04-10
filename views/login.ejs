@@ -57,27 +57,22 @@
         <div class="col-md-6">
           <div class="d-flex justify-content-center d-md-block">
             <h2>
-              Contact Us
+              Login
             </h2>
+            <p style="color: red;">Attention: Login function is for admin only</p>
           </div>
           <form action="/sentContact" method="POST">
             <div class="contact_form-container">
               <div>
                 <div>
-                  <input type="text" placeholder="Name" name="Name">
+                  <input type="email" placeholder="Email Address" name="Name">
                 </div>
                 <div>
-                  <input type="email" placeholder="Email Address" name="email">
-                </div>
-                <div>
-                  <input type="number" placeholder="Phone Number" name="phoneNumber">
-                </div>
-                <div>
-                  <input type="text" placeholder="Message" name="mess">
+                  <input type="password" placeholder="Password" name="email">
                 </div>
                 <div class="mt-5">
                   <button type="submit">
-                    Send
+                    Login
                   </button>
                 </div>
               </div>
@@ -88,34 +83,10 @@
         </div>
         <div class="col-md-6">
           <div class="contact_img-box">
-            <img src="images/students.jpg" alt="">
+            <img src="images/logoCCM.png" alt="">
           </div>
         </div>
       </div>
-      <div class="d-flex justify-content-center d-md-block">
-        <h2 style="text-align: center;">
-          User Feedback
-        </h2>
-      </div>
-
-      <div class="container mt-4 p-4">
-        <div class="row row-cols-1 row-cols-md-2">
-            <% contacts.forEach(item => { %>
-                <div class="col-lg-4 col-sm-6 mb-4">
-                  <form class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <p style="color: red;">Name:</p><%= item.Name%>
-                            </h5>
-                            <p class="card-text">
-                                <p style="color: red;">Description:</p><%= item.mess%>
-                            </p>
-                        </div>
-                    </form>
-                </div>
-                <%})%>
-        </div>
-    </div>
     </div>
   </section>
   <!-- end contact section -->

@@ -61,14 +61,20 @@
             </h2>
             <p style="color: red;">Attention: Login function is for admin only</p>
           </div>
-          <form action="/signup" method="POST">
+          <form action="/ad-signup" method="POST">
             <div class="contact_form-container">
               <div>
                 <div>
                   <input type="text" placeholder="User Name" name="name" autocomplete="off">
                 </div>
                 <div>
+                  <input type="email" placeholder="Email" name="email" autocomplete="off">
+                </div>
+                <div>
                   <input type="password" placeholder="Password" name="password" autocomplete="off">
+                </div>
+                <div>
+                  <input type="date" placeholder="Date Of Birth" name="dateOfBirth" autocomplete="off">
                 </div>
                 <div class="mt-5">
                   <button type="submit">

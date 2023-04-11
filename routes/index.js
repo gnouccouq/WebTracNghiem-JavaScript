@@ -7,10 +7,9 @@ var Account = require('..//app/model/account')
 var Vocabulary = require('..//app/model/vocabulary');
 const { render } = require("express/lib/response");
 const { default: mongoose } = require("mongoose");
-const jwt=require("jsonwebtoken")
-const cookieParser=require("cookie-parser")
-const bcryptjs=require("bcryptjs")
 
+//password handler
+const bcrypt = require('bcrypt');
  
 
 //const Exam = require('..//app/model/exam')
@@ -18,23 +17,12 @@ const bcryptjs=require("bcryptjs")
 //const Vocabulary = require('..//app/model/vocabulary')
 //const Contact = require('..//app/model/contact')
 
-async function hashPass(password){
-
-    const res=await bcryptjs.hash(password,10)
-    return res
-
-}
-async function compare(userPass,hashPass){
-
-    const res=await bcryptjs.compare(userPass,hashPass)
-    return res
-
-}
-
-// new Account({
-//     name: "cuong",
-//     password: "1234",
-// }).save()
+new Account({
+    name: "cuong",
+    email: "cuongnguyenc.n1612@gmail.com",
+    password: "test1234",
+ 
+}).save()
 
 function Routes(app) {
     
@@ -42,6 +30,7 @@ function Routes(app) {
         Unit.find().then((units) => {
             res.render('home.ejs', { units: units })
         })
+        
     })
 
     app.get('/units.ejs', function(req, res) {
@@ -82,6 +71,18 @@ function Routes(app) {
     app.get('/formdelete/:id', function(req, res) {
         Unit.findByIdAndDelete(req.params.id, (error, data) => {
             res.redirect('/addunits.ejs');
+        });
+    })
+
+    app.get('/deletecontact/:id', function(req, res) {
+        Contact.findByIdAndDelete(req.params.id, (error, data) => {
+            res.redirect('/adfeedback.ejs');
+        });
+    })
+
+    app.get('/deleteuser/:id', function(req, res) {
+        Exam.findByIdAndDelete(req.params.id, (error, data) => {
+            res.redirect('/aduser.ejs');
         });
     })
 
@@ -126,7 +127,7 @@ function Routes(app) {
        
         res.render('signup.ejs')
     
-})
+    })
 
     app.get('/contact.ejs', function(req, res) {
         Contact.find({}, (error, data) => {
@@ -158,69 +159,134 @@ function Routes(app) {
         res.redirect('/contact.ejs')
     })
 
-    app.post('/signup',async(req,res)=>{
-        try{
-            const check=await Collection.findOne({name:req.body.name})
-    
-            if(check){
-                res.send("user already exist")
-            }
-    
-            else{
-                const token=jwt.sign({name:req.body.name},"helloandwelcometotechywebdevtutorialonauthhelloandwelcometotechywebdevtutorialonauth")
-    
-                res.cookie("jwt",token,{
-                    maxAge:600000,
-                    httpOnly:true
-                })
-    
-    
-                const data={
-                    name:req.body.name,
-                    password:await hashPass(req.body.password),
-                    token:token
+    app.post('/ad-signup', (req,res)=>{
+        let {name, email, password, dateOfBirth} = req.body;
+        name = name.trim();
+        email = email.trim();
+        password = password.trim();
+        dateOfBirth = dateOfBirth.trim();
+
+        if(name == "" || email == "" || password == "" || dateOfBirth ==""){
+            res.json({
+                status: "FAILED",
+                message: "Empty input fields!"
+            });
+        }else if (!/^[a-zA-Z]*$/.test(name)){
+            res.json({
+                status: "FAILED",
+                message: "Invalid name entered!"
+            })
+        }else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)){
+            res.json({
+                status: "FAILED",
+                message: "Invalid email entered!"
+            })
+        }else if (!new Date(dateOfBirth).getTime()){
+            res.json({
+                status: "FAILED",
+                message: "Invalid date of birth entered!"
+            })
+        }else if (password.length < 8){
+            res.json({
+                status: "FAILED",
+                message: "Password is too short!"
+            })
+        }else {
+            //Checking if user already exists
+            Account.find({email}).then(result => {
+                if(result.length) {
+                    res.json({
+                        status: "FAILED",
+                        message: "User with the provided email already exists"
+                    })
+                }else{
+                    const saltRounds = 10;
+                    bcrypt.hash(password, saltRounds).then(hashedPassword => {
+                        const newUser = new User ({
+                            name,
+                            email,
+                            password: hashedPassword,
+                            dateOfBirth
+                        });
+                        
+                        newUser.save().then(result => {
+                            res.json({
+                                status: "SUCCESS",
+                                message: "Sign up successful",
+                                data: result,
+                            })
+                        })
+                        .catch(err => {
+                            res.json({
+                                status: "FAILED",
+                                message: "An error occurred while saving user account!"
+                            })
+                        })
+                    })
+                    .catch(err => {
+                        res.json({
+                            status: "FAILED",
+                            message: "An error occurred while hashing password!"
+                        })
+                    })
                 }
-    
-                await Collection.insertMany([data])
-    
-                res.render('/login.ejs',{name:req.body.name})
-    
-            }
-    
-        }
-        catch{
-    
-            res.send("wrong details")
-    
+            }).catch(err => {
+                console.log(err);
+                res.json({
+                    status: "FAILED",
+                    message: "An error occurred while checking for existing user!"
+                })
+            })
         }
     })
 
-    app.post('/login',async(req,res)=>{
-        try{
-            const check = await Collection.findOne({name:req.body.name})
-            const passCheck = await compare(req.body.password,check.password)
-    
-            if(check && passCheck){
-    
-                res.cookie("jwt",check.token,{
-                    maxAge:600000,
-                    httpOnly:true
+    app.post('/ad-login', (req,res)=>{
+        let {email, password} = req.body;
+        email = email.trim();
+        password = password.trim();
+
+        if(email == "" || password == ""){
+            res.json({
+                status: "FAILED",
+                message: "Empty credentials supplied!"
+            })
+        }else {
+            Account.find({email}).then(data => {
+                if(data) {
+                    const hashedPassword = data[0].password;
+                    bcrypt.compare(password, hashedPassword).then(result => {
+                        if(result) {
+                            res.json({
+                                status: "SUCCESS",
+                                message: "Sign up successful",
+                                data: data
+                            })
+                        }else {
+                            res.json({
+                                status: "FAILED",
+                                message: "Invalid password entered!"
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        res.json({
+                            status: "FAILED",
+                            message: "An error occurred while comparing passwords!"
+                        })
+                    })
+                } else {
+                    res.json({
+                        status: "FAILED",
+                        message: "Invalid credentials entered!"
+                    })
+                }
+            })
+            .catch(err => {
+                res.json({
+                    status: "FAILED",
+                    message: "An error occurred while checking for existing user!"
                 })
-    
-                res.render('/admin.ejs',{name:req.body.name})
-            }
-            
-            else{
-                
-                res.send("wrong details")
-    
-            }
-    
-        }
-        catch{
-    
-            res.send("wrong details")
-    
+            })
         }
     })
 }

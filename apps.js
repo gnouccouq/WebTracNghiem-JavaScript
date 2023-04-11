@@ -7,6 +7,9 @@ const mongoose = require("mongoose");
 const routes = require('./routes')
 const db = require('./config/database')
 
+const UserRouter = require('./routes/index');
+app.use('/user', UserRouter)
+
 mongoose.set("strictQuery", false);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

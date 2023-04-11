@@ -53,6 +53,7 @@
             <th>Percent Complete</th>
             <th>Unit ID</th>
             <th>Time</th>
+            <th>Action</th>
         </tr>
         <% exams.forEach(item => { %>
             <tr>
@@ -60,7 +61,8 @@
                 <td><%= item.userName%></td>
                 <td><%= item.percentComplete%></td>
                 <td><%= item.unitId%></td>
-                <td><%= item.updatedAt%></td>   
+                <td><%= item.updatedAt%></td>  
+                <td><a href="/deleteuser/<%= item._id%>">Delete</a></td> 
             </tr>
             
             <%})%>

@@ -61,14 +61,14 @@
             </h2>
             <p style="color: red;">Attention: Login function is for admin only</p>
           </div>
-          <form action="/sentContact" method="POST">
+          <form action="/login" method="POST">
             <div class="contact_form-container">
               <div>
                 <div>
-                  <input type="email" placeholder="Email Address" name="Name">
+                  <input type="text" placeholder="User Name" name="name" autocomplete="off">
                 </div>
                 <div>
-                  <input type="password" placeholder="Password" name="email">
+                  <input type="password" placeholder="Password" name="password" autocomplete="off">
                 </div>
                 <div class="mt-5">
                   <button type="submit">

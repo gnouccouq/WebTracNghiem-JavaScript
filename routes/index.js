@@ -3,17 +3,38 @@ const router = express.Router();
 var Contact = require("..//app/model/contact");
 var Exam = require('..//app/model/exam')
 var Unit = require('..//app/model/unit')
+var Account = require('..//app/model/account')
 var Vocabulary = require('..//app/model/vocabulary');
 const { render } = require("express/lib/response");
 const { default: mongoose } = require("mongoose");
+const jwt=require("jsonwebtoken")
+const cookieParser=require("cookie-parser")
+const bcryptjs=require("bcryptjs")
 
+ 
 
 //const Exam = require('..//app/model/exam')
 //const Unit = require('..//app/model/unit')
 //const Vocabulary = require('..//app/model/vocabulary')
 //const Contact = require('..//app/model/contact')
 
+async function hashPass(password){
 
+    const res=await bcryptjs.hash(password,10)
+    return res
+
+}
+async function compare(userPass,hashPass){
+
+    const res=await bcryptjs.compare(userPass,hashPass)
+    return res
+
+}
+
+// new Account({
+//     name: "cuong",
+//     password: "1234",
+// }).save()
 
 function Routes(app) {
     
@@ -101,6 +122,12 @@ function Routes(app) {
         
     })
 
+    app.get('/signup.ejs', function(req, res) {
+       
+        res.render('signup.ejs')
+    
+})
+
     app.get('/contact.ejs', function(req, res) {
         Contact.find({}, (error, data) => {
             console.log('Danh sach lien he', data);
@@ -129,6 +156,72 @@ function Routes(app) {
     app.post('/sentContact', function(req, res, next) {
         Contact.create(req.body);
         res.redirect('/contact.ejs')
+    })
+
+    app.post('/signup',async(req,res)=>{
+        try{
+            const check=await Collection.findOne({name:req.body.name})
+    
+            if(check){
+                res.send("user already exist")
+            }
+    
+            else{
+                const token=jwt.sign({name:req.body.name},"helloandwelcometotechywebdevtutorialonauthhelloandwelcometotechywebdevtutorialonauth")
+    
+                res.cookie("jwt",token,{
+                    maxAge:600000,
+                    httpOnly:true
+                })
+    
+    
+                const data={
+                    name:req.body.name,
+                    password:await hashPass(req.body.password),
+                    token:token
+                }
+    
+                await Collection.insertMany([data])
+    
+                res.render('/login.ejs',{name:req.body.name})
+    
+            }
+    
+        }
+        catch{
+    
+            res.send("wrong details")
+    
+        }
+    })
+
+    app.post('/login',async(req,res)=>{
+        try{
+            const check = await Collection.findOne({name:req.body.name})
+            const passCheck = await compare(req.body.password,check.password)
+    
+            if(check && passCheck){
+    
+                res.cookie("jwt",check.token,{
+                    maxAge:600000,
+                    httpOnly:true
+                })
+    
+                res.render('/admin.ejs',{name:req.body.name})
+            }
+            
+            else{
+                
+                res.send("wrong details")
+    
+            }
+    
+        }
+        catch{
+    
+            res.send("wrong details")
+    
+        }
     })
 }
 module.exports = Routes;
